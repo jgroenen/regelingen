@@ -1,21 +1,29 @@
 ---
-fields: [doelgroep,categorie,type,id,omschrijving,'110','120','150',route,bijzonderheden,verwijzen,telefoon]
+fields: [id,omschrijving,'110','120','150',route,bijzonderheden,verwijzen,telefoon]
 ---
 {
-    "voorzieningen": {
+    "voorzieningen": [
     {% for voorziening in site.data.voorzieningen %}
         {% if voorziening.doelgroep %}
             {% assign doelgroep = voorziening.doelgroep | downcase %}
         {% endif %}
-        "{{ voorziening.id }}": {
+
+        {% if voorziening.type %}
+            {% assign type = voorziening.type | downcase %}
+        {% endif %}
+
+        {% if voorziening.categorie %}
+            {% assign categorie = voorziening.categorie | downcase %}
+        {% endif %}
+
+        {
+            "doelgroep": "{{ doelgroep }}",
+            "type": "{{ type }}",
+            "categorie": "{{ categorie }}",
         {% for field in page.fields %}
-            {% if field == 'doelgroep' %}
-            "{{ field }}": "{{ doelgroep }}"{% if forloop.last == false %},{% endif %}
-            {% else %}
-            "{{ field }}": "{{ voorziening[field] | downcase }}"{% if forloop.last == false %},{% endif %}
-            {% endif %}
+            "{{ field }}": "{{ voorziening[field] | default: store[field] | downcase }}"{% if forloop.last == false %},{% endif %}
         {% endfor %}
         }{% if forloop.last == false %},{% endif %}
     {% endfor %}{% if forloop.last == false %},{% endif %}
-    }
+    ]
 }

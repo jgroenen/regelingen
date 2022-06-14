@@ -1,17 +1,55 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <script src="microtemplating.js"></script>
+    </head>
     <body>
-        <input type="text" id="vind-voorzieningen">
-        <main>
+        <header>
+            Doorzoek voorzieningen:
+            <input type="text" id="vind-voorzieningen">
+        </header>
+        <main id="resultaten">
         </main>
+        <style>
+            html, body {
+                font-family: Arial
+            }
+            header, input {
+                font-size: 1.4em;
+            }
+            .voorziening {
+                background: #eee;
+                padding: 10px 20px;
+                margin: 10px 0;
+                border-radius: 10px;
+            }
+        </style>
+        <script type="text/template" id="resultaat_template">
+            <div class="voorziening">
+                <h2><%=doelgroep%>, <%=categorie%>, <%=type%></h2>
+                <h1><%=omschrijving%></h1>
+            </div>
+        </script>
         <script type="module">
+            function render(resultaten) {
+                let html = resultaten.map(function (resultaat) {
+                    return tmpl("resultaat_template", resultaat);
+                });
+                document.getElementById("resultaten").innerHTML = html.join("");
+            }
             //import Voorzieningen from '/js/VZ.mjs';
-            var vz = await fetch ('voorzieningen.json').then(rs => rs.json());
             //var VZ = new VZ();
-            console.log(vz);
+            var voorzieningen = await fetch ('voorzieningen.json').then(rs => rs.json()).then(rs => rs.voorzieningen);
+            render(voorzieningen);
             document.getElementById('vind-voorzieningen').onkeyup = function (e) {
                 let val = e.srcElement.value;
-                vz.filter()
+                let resultaten = voorzieningen.filter(function (voorziening) {
+                    return voorziening.doelgroep.indexOf(val) !== -1 ||
+                           voorziening.omschrijving.indexOf(val) !== -1 ||
+                           voorziening.type.indexOf(val) !== -1 ||
+                           voorziening.categorie.indexOf(val) !== -1;
+                });
+                render(resultaten);
             };
         </script>
     </body>
