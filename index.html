@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <input type="text" id="vind-voorzieningen">
+        <main>
+        </main>
+        <script type="module">
+            //import Voorzieningen from '/js/VZ.mjs';
+            var vz = await fetch ('voorzieningen.json').then(rs => rs.json());
+            //var VZ = new VZ();
+            console.log(vz);
+            document.getElementById('vind-voorzieningen').onkeyup = function (e) {
+                let val = e.srcElement.value;
+                vz.filter()
+            };
+        </script>
+    </body>
+</html>

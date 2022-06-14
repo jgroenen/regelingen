@@ -1,0 +1,21 @@
+---
+fields: [doelgroep,categorie,type,id,omschrijving,'110','120','150',route,bijzonderheden,verwijzen,telefoon]
+---
+{
+    "voorzieningen": {
+    {% for voorziening in site.data.voorzieningen %}
+        {% if voorziening.doelgroep %}
+            {% assign doelgroep = voorziening.doelgroep | downcase %}
+        {% endif %}
+        "{{ voorziening.id }}": {
+        {% for field in page.fields %}
+            {% if field == 'doelgroep' %}
+            "{{ field }}": "{{ doelgroep }}"{% if forloop.last == false %},{% endif %}
+            {% else %}
+            "{{ field }}": "{{ voorziening[field] | downcase }}"{% if forloop.last == false %},{% endif %}
+            {% endif %}
+        {% endfor %}
+        }{% if forloop.last == false %},{% endif %}
+    {% endfor %}{% if forloop.last == false %},{% endif %}
+    }
+}
